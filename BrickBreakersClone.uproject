@@ -5,7 +5,7 @@
 	"Description": "",
 	"Modules": [
 		{
-			"Name": "UnrealBaseTemplate",
+			"Name": "BrickBreakersClone",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

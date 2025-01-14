@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UnrealBaseTemplate : ModuleRules
+public class BrickBreakersClone : ModuleRules
 {
-	public UnrealBaseTemplate(ReadOnlyTargetRules Target) : base(Target)
+	public BrickBreakersClone(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	

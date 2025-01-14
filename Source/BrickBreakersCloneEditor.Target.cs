@@ -3,13 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class UnrealBaseTemplateTarget : TargetRules
+public class BrickBreakersCloneEditorTarget : TargetRules
 {
-	public UnrealBaseTemplateTarget(TargetInfo Target) : base(Target)
+	public BrickBreakersCloneEditorTarget( TargetInfo Target) : base(Target)
 	{
-		Type = TargetType.Game;
+		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
-		ExtraModuleNames.Add("UnrealBaseTemplate");
+		ExtraModuleNames.Add("BrickBreakersClone");
 	}
 }
