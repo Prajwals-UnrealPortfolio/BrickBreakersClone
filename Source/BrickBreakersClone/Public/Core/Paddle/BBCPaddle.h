@@ -39,8 +39,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = Input ,meta=(AllowPrivateAccess = "true"))
 	TSoftObjectPtr<UInputAction> MoveInputAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Mesh, meta=(AllowPrivateAccess = "true"))
+	UStaticMeshComponent* PaddleMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Scene, meta=(AllowPrivateAccess = "true"))
+	USceneComponent* PaddleSceneComponent;
+
 	UPROPERTY()
 	ABBCPlayerController* BBCPlayerController;
+
+	float InputDirection;
+	float Velocity;
 	
 
 private:
