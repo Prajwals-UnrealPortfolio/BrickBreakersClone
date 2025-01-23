@@ -2,15 +2,12 @@
 
 
 #include "Core/Paddle/BBCPaddle.h"
-#include "Cameras/BBCCamera.h"
 #include "EnhancedInputSubsystems.h"
 #include "PlayerController/BBCPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInput/Public/InputAction.h"
 #include "EnhancedInput/Public/InputMappingContext.h"
 #include "InputActionValue.h"
-#include "Camera/CameraComponent.h"
-#include "GameMode/BBCGameMode.h"
 
 // Sets default values
 ABBCPaddle::ABBCPaddle():
@@ -24,6 +21,11 @@ MaxBoundaryLength(0.f)
 	SetRootComponent(PaddleSceneComponent);
 	PaddleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PadddleMesh"));
 	PaddleMesh->SetupAttachment(GetRootComponent());
+
+	PaddleMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	PaddleMesh->SetCollisionObjectType(ECC_Pawn);
+	PaddleMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
+	PaddleMesh->SetSimulatePhysics(false);
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +36,8 @@ void ABBCPaddle::BeginPlay()
 	SetActorLocation(FVector(0.f,400.f,0.f));
 	SetActorRotation(FRotator::ZeroRotator);
 	SetActorScale3D(FVector(2.f,1.f,1.f));
+
+	this->Tags.Add("Paddle");
 	
 	if(Controller == nullptr)
 	{
@@ -56,7 +60,7 @@ void ABBCPaddle::BeginPlay()
 	}
 
 	Subsystem->ClearAllMappings();
-	Subsystem->AddMappingContext(PlayerInputMappingContext.Get(), 0);
+	Subsystem->AddMappingContext(PlayerInputMappingContext, 0);
 }
 
 // Called every frame
@@ -75,7 +79,7 @@ void ABBCPaddle::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		UE_LOG(LogTemp, Error, TEXT("EnhancedInputComponent is Invalid"));
 		return;
 	}
-	EnhancedInputComponent->BindAction(MoveInputAction.Get(), ETriggerEvent::Triggered, this, &ABBCPaddle::MoveLeftOrRight);
+	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &ABBCPaddle::MoveLeftOrRight);
 }
 
 void ABBCPaddle::SetMaxBoundaryLength(float Value)
@@ -88,8 +92,9 @@ void ABBCPaddle::MoveLeftOrRight(const FInputActionValue& Value)
 	InputDirection = Value.Get<float>();
 	InputDirection = FMath::Clamp(InputDirection, -1.f,1.f);
 	const float DeltaTime = GetWorld()->GetDeltaSeconds();
-	const FVector Movement = FVector::ForwardVector * InputDirection * MovementSpeed * DeltaTime;
-	FVector NewLocation = GetActorLocation() + Movement;
+	const FVector TargetMovement = FVector::ForwardVector * InputDirection * MovementSpeed * DeltaTime;
+	const FVector CurrentLocation = GetActorLocation();
+	FVector NewLocation = FMath::VInterpTo(CurrentLocation, CurrentLocation + TargetMovement, DeltaTime,100.0f);
 	NewLocation.X = FMath::Clamp(NewLocation.X, -MaxBoundaryLength, MaxBoundaryLength);
 	SetActorLocation(NewLocation);
 }
