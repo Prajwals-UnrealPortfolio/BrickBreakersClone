@@ -32,14 +32,16 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void SetMaxBoundaryLength(float Value);
+	
+	float GetPaddleVelocity() const {return Velocity; }
 
 private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = Input ,meta=(AllowPrivateAccess = "true"))
-	TSoftObjectPtr<UInputMappingContext> PlayerInputMappingContext;
+	UInputMappingContext* PlayerInputMappingContext;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = Input ,meta=(AllowPrivateAccess = "true"))
-	TSoftObjectPtr<UInputAction> MoveInputAction;
+	UInputAction* MoveInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Mesh, meta=(AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PaddleMesh;
@@ -47,7 +49,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Scene, meta=(AllowPrivateAccess = "true"))
 	USceneComponent* PaddleSceneComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement", meta = (ClampMin = "0.0"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement", meta = (ClampMin = "0.0", AllowPrivateAccess = "true"))
 	float MovementSpeed;
 	
 	UPROPERTY()
@@ -56,11 +58,13 @@ private:
 	float InputDirection;
 	UPROPERTY()
 	float Velocity;
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	float MaxBoundaryLength;
 
 private:
 	
 	void MoveLeftOrRight(const FInputActionValue& Value);
+
+	
 
 };

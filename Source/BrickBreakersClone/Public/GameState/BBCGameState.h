@@ -6,6 +6,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "BBCGameState.generated.h"
 
+class ABBCBall;
+class ABBCPlayerController;
 /**
  * Current score
  * Number of remaining bricks
@@ -16,5 +18,22 @@ UCLASS()
 class BRICKBREAKERSCLONE_API ABBCGameState : public AGameStateBase
 {
 	GENERATED_BODY()
+
+public:
+
+	ABBCGameState();
+	
+	virtual void BeginPlay() override;
+	
+	virtual void Tick(float DeltaSeconds) override;
+
+	void SetPlayerControllerAndBall(ABBCPlayerController* BBCController, ABBCBall* Ball);
+
+private:
+
+	UPROPERTY()
+	ABBCPlayerController* BBCPlayerController;
+	UPROPERTY()
+	ABBCBall* BBCBall;
 	
 };

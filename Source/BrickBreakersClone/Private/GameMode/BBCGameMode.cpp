@@ -4,8 +4,10 @@
 #include "GameMode/BBCGameMode.h"
 
 #include "Camera/CameraComponent.h"
+#include "GameState/BBCGameState.h"
 #include "Cameras/BBCCamera.h"
 #include "Core/Paddle/BBCPaddle.h"
+#include "Core/Ball/BBCBall.h"
 #include "PlayerController/BBCPlayerController.h"
 
 void ABBCGameMode::StartPlay()
@@ -41,6 +43,17 @@ void ABBCGameMode::StartPlay()
 	}
 	float MaxBoundaryLength = BBCCamera->GetCameraComponent()->OrthoWidth;
 	MaxBoundaryLength/=2;
-	MaxBoundaryLength-=48.f;
+	MaxBoundaryLength-=98.f;
 	BBCPaddle->SetMaxBoundaryLength(MaxBoundaryLength);
+
+	BBCBall = World->SpawnActor<ABBCBall>(ABBCBall::StaticClass());
+	if((!ensure(BBCBall)))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn Ball. Ensure CameraClass is set in Blueprint."));
+		return;
+	}
+	BBCBall->ResetBall();
+
+	BBCGameState = GetGameState<ABBCGameState>();
+	BBCGameState->SetPlayerControllerAndBall(BBCPlayerController, BBCBall);
 }
