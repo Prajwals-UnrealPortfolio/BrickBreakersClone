@@ -16,7 +16,7 @@ void ABBCGameMode::StartPlay()
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	
-	BBCCamera = World->SpawnActor<ABBCCamera>(ABBCCamera::StaticClass());
+	BBCCamera = World->SpawnActor<ABBCCamera>(ABBCCamera::StaticClass(), SpawnParameters);
 	if((!ensure(BBCCamera)))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to spawn Camera. Ensure CameraClass is set in Blueprint."));

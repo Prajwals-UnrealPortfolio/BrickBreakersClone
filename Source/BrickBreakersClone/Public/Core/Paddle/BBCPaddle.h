@@ -47,15 +47,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Scene, meta=(AllowPrivateAccess = "true"))
 	USceneComponent* PaddleSceneComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement", meta = (ClampMin = "0.0"))
+	float MovementSpeed;
+	
 	UPROPERTY()
 	ABBCPlayerController* BBCPlayerController;
-
 	UPROPERTY()
 	float InputDirection;
 	UPROPERTY()
 	float Velocity;
-	UPROPERTY()
-	float MovementSpeed;
 	UPROPERTY()
 	float MaxBoundaryLength;
 

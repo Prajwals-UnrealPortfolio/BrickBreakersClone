@@ -23,12 +23,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UCameraComponent* BBCCameraComponent;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, Category = "Camera", meta = (ClampMin = "0.0", ClampMax = "180.0"))
 	float FieldOfView;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, Category = "Camera", meta = (MakeEditWidget = true))
 	FVector SpawnLocation;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	FRotator SpawnRotation;
 };

@@ -87,10 +87,10 @@ void ABBCPaddle::MoveLeftOrRight(const FInputActionValue& Value)
 {
 	InputDirection = Value.Get<float>();
 	InputDirection = FMath::Clamp(InputDirection, -1.f,1.f);
-	Velocity = InputDirection * MovementSpeed;
-	FVector Location = GetActorLocation();
-	Location += FVector::ForwardVector * Velocity * GetWorld()->GetDeltaSeconds();
-	Location.X = FMath::Clamp(Location.X, -MaxBoundaryLength, MaxBoundaryLength);
-	SetActorLocation(Location);
+	const float DeltaTime = GetWorld()->GetDeltaSeconds();
+	const FVector Movement = FVector::ForwardVector * InputDirection * MovementSpeed * DeltaTime;
+	FVector NewLocation = GetActorLocation() + Movement;
+	NewLocation.X = FMath::Clamp(NewLocation.X, -MaxBoundaryLength, MaxBoundaryLength);
+	SetActorLocation(NewLocation);
 }
 
