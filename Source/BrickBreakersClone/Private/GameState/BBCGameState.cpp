@@ -5,21 +5,6 @@
 #include "Core/Ball/BBCBall.h"
 #include "PlayerController/BBCPlayerController.h"
 
-ABBCGameState::ABBCGameState()
-{
-	PrimaryActorTick.bCanEverTick = true;
-}
-
-void ABBCGameState::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void ABBCGameState::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}
-
 void ABBCGameState::SetPlayerControllerAndBall(ABBCPlayerController* BBCController, ABBCBall* Ball)
 {
 	BBCPlayerController = BBCController;
