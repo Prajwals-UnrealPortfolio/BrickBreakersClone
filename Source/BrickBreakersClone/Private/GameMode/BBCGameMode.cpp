@@ -28,7 +28,7 @@ void ABBCGameMode::StartPlay()
 	BBCPlayerController = Cast<ABBCPlayerController>(World->GetFirstPlayerController());
 	if((!ensure(BBCPlayerController)))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to get Player Controller. Ensure game mode is properly set in project settings."));
+		UE_LOG(LogTemp, Error, TEXT("Failed to get Player Controller. "));
 		return;
 	}
 
@@ -38,7 +38,7 @@ void ABBCGameMode::StartPlay()
 
 	if((!ensure(BBCPaddle)))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to get BBCPaddle. Ensure game mode is properly set in project settings."));
+		UE_LOG(LogTemp, Error, TEXT("Failed to get BBCPaddle. "));
 		return;
 	}
 	float MaxBoundaryLength = BBCCamera->GetCameraComponent()->OrthoWidth;
@@ -46,14 +46,19 @@ void ABBCGameMode::StartPlay()
 	MaxBoundaryLength-=98.f;
 	BBCPaddle->SetMaxBoundaryLength(MaxBoundaryLength);
 
-	BBCBall = World->SpawnActor<ABBCBall>(ABBCBall::StaticClass());
+	BBCBall = World->SpawnActor<ABBCBall>(ABBCBall::StaticClass(), SpawnParameters);
 	if((!ensure(BBCBall)))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to spawn Ball. Ensure CameraClass is set in Blueprint."));
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn Ball. "));
 		return;
 	}
 	BBCBall->ResetBall();
 
 	BBCGameState = GetGameState<ABBCGameState>();
+	if((!ensure(BBCGameState)))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get BBCGameState. "));
+		return;
+	}
 	BBCGameState->SetPlayerControllerAndBall(BBCPlayerController, BBCBall);
 }

@@ -18,22 +18,19 @@ void ABBCGameState::BeginPlay()
 void ABBCGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if(BBCPlayerController != nullptr)
-	{
-		if ( BBCPlayerController->WasInputKeyJustReleased( EKeys::SpaceBar ) )
-		{
-			if(BBCBall != nullptr)
-			{
-				BBCBall->StartMoving();
-			}
-		}
-	}
-	
 }
 
 void ABBCGameState::SetPlayerControllerAndBall(ABBCPlayerController* BBCController, ABBCBall* Ball)
 {
 	BBCPlayerController = BBCController;
 	BBCBall = Ball;
+}
+
+
+void ABBCGameState::TryStartBall()
+{
+	if(BBCBall != nullptr)
+	{
+		BBCBall->StartMoving();
+	}
 }

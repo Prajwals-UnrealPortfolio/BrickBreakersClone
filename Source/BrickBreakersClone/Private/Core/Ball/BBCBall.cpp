@@ -53,7 +53,7 @@ void ABBCBall::Tick(float DeltaTime)
 void ABBCBall::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved,
 	FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Direction = Direction.MirrorByVector(HitNormal);
+	Direction = Direction.MirrorByVector(HitNormal).GetSafeNormal();
 	
 	if(OtherComp->ComponentHasTag("UnSafeBound"))
 	{
@@ -67,7 +67,9 @@ void ABBCBall::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveC
 		{
 			return;
 		}
-		Direction.X += (Paddle->GetPaddleVelocity() / Velocity);
+		const float PaddleInfluence = FMath::Clamp(Paddle->GetPaddleVelocity() / Velocity,-0.75f, 0.75f);
+		Direction.X += PaddleInfluence;
+		Direction = Direction.GetSafeNormal();
 	}
 }
 

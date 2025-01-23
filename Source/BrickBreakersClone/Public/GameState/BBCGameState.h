@@ -29,11 +29,14 @@ public:
 
 	void SetPlayerControllerAndBall(ABBCPlayerController* BBCController, ABBCBall* Ball);
 
+	void TryStartBall();
+
 private:
 
 	UPROPERTY()
-	ABBCPlayerController* BBCPlayerController;
+	TWeakObjectPtr<ABBCPlayerController> BBCPlayerController;
 	UPROPERTY()
-	ABBCBall* BBCBall;
+	TWeakObjectPtr<ABBCBall> BBCBall;
 	
 };
+
