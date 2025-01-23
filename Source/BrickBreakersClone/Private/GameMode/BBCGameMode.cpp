@@ -10,6 +10,24 @@
 #include "Core/Ball/BBCBall.h"
 #include "PlayerController/BBCPlayerController.h"
 
+/**
+ * @brief Initializes the game state and spawns essential game actors.
+ *
+ * This method is responsible for setting up the game environment by:
+ * - Spawning the game camera
+ * - Setting up the player controller
+ * - Configuring the paddle's movement boundaries
+ * - Spawning and resetting the game ball
+ * - Updating the game state with player and ball references
+ *
+ * @note Performs multiple error checks to ensure critical components are properly initialized
+ * @note Logs error messages if any critical initialization steps fail
+ *
+ * @throws No exceptions are thrown, but error conditions are logged
+ *
+ * @pre Requires a valid game world and properly configured game mode settings
+ * @post Game camera, player controller, paddle, and ball are initialized
+ */
 void ABBCGameMode::StartPlay()
 {
 	Super::StartPlay();
