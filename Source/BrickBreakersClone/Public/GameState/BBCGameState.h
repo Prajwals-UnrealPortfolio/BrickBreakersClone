@@ -21,19 +21,16 @@ class BRICKBREAKERSCLONE_API ABBCGameState : public AGameStateBase
 
 public:
 
-	ABBCGameState();
-	
-	virtual void BeginPlay() override;
-	
-	virtual void Tick(float DeltaSeconds) override;
-
 	void SetPlayerControllerAndBall(ABBCPlayerController* BBCController, ABBCBall* Ball);
+
+	void TryStartBall();
 
 private:
 
 	UPROPERTY()
-	ABBCPlayerController* BBCPlayerController;
+	TWeakObjectPtr<ABBCPlayerController> BBCPlayerController;
 	UPROPERTY()
-	ABBCBall* BBCBall;
+	TWeakObjectPtr<ABBCBall> BBCBall;
 	
 };
+
