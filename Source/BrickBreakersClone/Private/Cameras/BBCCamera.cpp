@@ -4,12 +4,15 @@
 #include "Cameras/BBCCamera.h"
 #include "Camera/CameraComponent.h"
 
-ABBCCamera::ABBCCamera()
+ABBCCamera::ABBCCamera() :
+FieldOfView(120.f),
+SpawnLocation(0.f,0.f,500.f),
+SpawnRotation(-90.f,0.f,-90.f)
 {
 	BBCCameraComponent = GetCameraComponent();
-	SetActorRelativeLocation(FVector(0.f,0.f,500.f));
-	SetActorRelativeRotation(FRotator(-90.f, 0.f,-90.f));
+	SetActorRelativeLocation(SpawnLocation);
+	SetActorRelativeRotation(SpawnRotation);
 	SetActorRelativeScale3D(FVector::OneVector);
 	BBCCameraComponent->ProjectionMode = ECameraProjectionMode::Orthographic;
-	BBCCameraComponent->SetFieldOfView(120.f);
+	BBCCameraComponent->SetFieldOfView(FieldOfView);
 }

@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "BBCGameMode.generated.h"
 
+class ABBCPaddle;
 class ABBCPlayerController;
 class ABBCCamera;
 /**
@@ -22,7 +23,11 @@ public:
 
 private:
 
+	UPROPERTY()
 	ABBCCamera* BBCCamera;
+	UPROPERTY()
 	ABBCPlayerController* BBCPlayerController;
+	UPROPERTY()
+	ABBCPaddle* BBCPaddle;
 	
 };

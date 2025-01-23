@@ -22,4 +22,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UCameraComponent* BBCCameraComponent;
+
+	UPROPERTY()
+	float FieldOfView;
+
+	UPROPERTY()
+	FVector SpawnLocation;
+
+	UPROPERTY()
+	FRotator SpawnRotation;
 };

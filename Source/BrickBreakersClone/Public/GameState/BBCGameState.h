@@ -7,7 +7,10 @@
 #include "BBCGameState.generated.h"
 
 /**
- * 
+ * Current score
+ * Number of remaining bricks
+ * Game status (in progress, paused, game over)
+ * Current level information
  */
 UCLASS()
 class BRICKBREAKERSCLONE_API ABBCGameState : public AGameStateBase

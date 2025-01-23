@@ -31,6 +31,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetMaxBoundaryLength(float Value);
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = Input ,meta=(AllowPrivateAccess = "true"))
@@ -48,9 +50,14 @@ private:
 	UPROPERTY()
 	ABBCPlayerController* BBCPlayerController;
 
+	UPROPERTY()
 	float InputDirection;
+	UPROPERTY()
 	float Velocity;
-	
+	UPROPERTY()
+	float MovementSpeed;
+	UPROPERTY()
+	float MaxBoundaryLength;
 
 private:
 	
