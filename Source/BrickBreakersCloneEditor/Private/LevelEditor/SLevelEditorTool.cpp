@@ -1,4 +1,4 @@
-﻿#include "LevelEditor/SLevelEditorTool.h"
+#include "LevelEditor/SLevelEditorTool.h"
 
 #include "AssetToolsModule.h"
 #include "ContentBrowserModule.h"
@@ -11,6 +11,24 @@
 
 #define LOCTEXT_NAMESPACE "SLevelEditorTool"
 
+/**
+ * Constructs the level editor tool's user interface and initializes its components.
+ *
+ * This method sets up the entire UI for the level editor, including:
+ * - Initializing the grid of bricks
+ * - Configuring color mappings for different brick types
+ * - Creating UI controls for grid size adjustment (rows and columns)
+ * - Adding buttons for saving, loading, and clearing the grid
+ * - Creating buttons for selecting different brick types
+ * - Setting up the grid visualization panel
+ *
+ * @note The method uses Slate UI framework for creating the interface
+ * @note Initializes the grid with zero-filled data and sets the default brick type to NORMAL
+ * @note Configures spin boxes for dynamic grid size modification
+ * @note Adds color-coded buttons for different brick types
+ *
+ * @param InArgs Slate function arguments (unused in this implementation)
+ */
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void SLevelEditorTool::Construct(const FArguments& InArgs)
@@ -204,18 +222,48 @@ void SLevelEditorTool::Construct(const FArguments& InArgs)
 	UpdateGrid();
 }
 
+/**
+ * @brief Handles the selection of a specific brick type in the level editor.
+ *
+ * This method is triggered when a brick type button is clicked, updating the current
+ * brick type for subsequent grid interactions. It sets the active brick type and
+ * signals that the event has been processed.
+ *
+ * @param BrickType The type of brick selected by the user
+ * @return FReply Indicates that the event has been handled by the UI system
+ */
 FReply SLevelEditorTool::OnBrickTypeClicked(EBRICK_TYPE BrickType)
 {
 	SetBrickType(BrickType);
 	return FReply::Handled();
 }
 
+/**
+ * Initiates the save level process by opening the save dialog.
+ *
+ * @brief Triggers the save dialog for the current level, allowing the user to specify a name and save location.
+ * @return FReply::Handled() to indicate the event has been processed
+ */
 FReply SLevelEditorTool::OnSaveLevel()
 {
 	OnOpenSaveDialog();
 	return FReply::Handled();
 }
 
+/**
+ * Opens a modal dialog window for saving a level with a custom name.
+ *
+ * This method creates a modal dialog that allows the user to enter a name for the current level.
+ * The dialog includes:
+ * - A text prompt instructing the user to enter a level name
+ * - An editable text box pre-populated with "NewLevel"
+ * - A "Save" button that triggers the SaveLevelAs method with the entered name
+ *
+ * The dialog window is modal, preventing interaction with the main window until closed.
+ * If a non-empty name is provided, the level is saved and the dialog is automatically closed.
+ *
+ * @note The dialog has a fixed size of 400x150 pixels and does not support maximizing or minimizing.
+ */
 void SLevelEditorTool::OnOpenSaveDialog()
 {
 	TSharedRef<SWindow> SaveDialogWindow = SNew(SWindow)
@@ -265,12 +313,33 @@ void SLevelEditorTool::OnOpenSaveDialog()
 	FSlateApplication::Get().AddModalWindow(SaveDialogWindow, nullptr);
 }
 
+/**
+ * @brief Initiates the level loading process by opening an asset picker dialog.
+ *
+ * This method triggers the asset picker interface, allowing the user to select a previously saved level asset
+ * to load into the level editor. After selection, the OnAssetSelected method will handle loading the chosen asset.
+ *
+ * @return FReply Indicates that the event has been handled by the method.
+ *
+ * @note This method is typically connected to a UI button or menu item for loading levels.
+ * @see OnOpenAssetPicker()
+ * @see OnAssetSelected()
+ */
 FReply SLevelEditorTool::OnLoadLevel()
 {
 	OnOpenAssetPicker();
 	return FReply::Handled();
 }
 
+/**
+ * Clears the entire grid and updates the visualization.
+ *
+ * This method performs two primary actions:
+ * 1. Resets all grid cells to an empty state using ClearDataInGrids()
+ * 2. Refreshes the grid's visual representation by calling UpdateGrid()
+ *
+ * @return FReply indicating that the event has been handled, preventing further propagation
+ */
 FReply SLevelEditorTool::OnClearGrid()
 {
 	ClearDataInGrids();
@@ -279,6 +348,27 @@ FReply SLevelEditorTool::OnClearGrid()
 	return FReply::Handled();
 }
 
+/**
+ * @brief Rebuilds the grid visualization dynamically based on current grid state.
+ *
+ * This method clears the existing grid panel and reconstructs it by iterating through
+ * each grid cell. For each cell, it creates a bordered widget with a color representing
+ * the brick type and a text label showing the brick state.
+ *
+ * @details The method handles:
+ * - Clearing existing grid children
+ * - Iterating through grid rows and columns
+ * - Creating interactive grid cells with mouse click handling
+ * - Setting cell colors based on brick type
+ * - Displaying brick type labels
+ *
+ * @note Interaction allows adding or removing bricks by clicking grid cells
+ * @note Empty cells are displayed with blank text
+ *
+ * @see AddBrickToGrid()
+ * @see RemoveBrickFromGrid()
+ * @see GetColorByBrickType()
+ */
 void SLevelEditorTool::UpdateGrid()
 {
 	GridPanel->ClearChildren();
@@ -319,6 +409,25 @@ void SLevelEditorTool::UpdateGrid()
 	}
 }
 
+/**
+ * Saves a brick level data asset to the project's content directory.
+ *
+ * This method handles the process of creating or overwriting a level asset, including:
+ * - Checking for existing assets
+ * - Prompting user for overwrite confirmation
+ * - Creating a new asset package
+ * - Copying level data to the new asset
+ * - Saving the package to disk
+ *
+ * @param LevelData The UBrickLevelData object containing the level configuration to save
+ * @param AssetName The name of the asset to be created or overwritten
+ *
+ * @note If an asset with the same name already exists, a confirmation dialog is shown
+ * @note Saves the asset in the "/Game/BrickBreakerLevels/" directory
+ *
+ * @see ShowNotification
+ * @see UBrickLevelData
+ */
 void SLevelEditorTool::SaveDataAsset(UBrickLevelData* LevelData, const FString& AssetName)
 {
 	FString PackagePath = FString::Printf(TEXT("/Game/BrickBreakerLevels/%s"), *AssetName);
@@ -383,6 +492,24 @@ void SLevelEditorTool::SaveDataAsset(UBrickLevelData* LevelData, const FString& 
 	
 }
 
+/**
+ * @brief Loads a brick level data asset from the specified asset path.
+ *
+ * @param AssetPath Full path to the brick level data asset to be loaded.
+ *
+ * @return bool True if the asset was successfully loaded and processed, false otherwise.
+ *
+ * @details This method attempts to load a UBrickLevelData asset and update the current level editor's grid configuration.
+ * If successful, it:
+ * - Sets the current level data
+ * - Updates grid dimensions (rows and columns)
+ * - Sets the cell size
+ * - Resets the grid bricks array
+ * - Populates the grid with brick information from the loaded asset
+ *
+ * @note The method uses StaticLoadObject to load the asset and performs type casting to ensure correct asset type.
+ * @note Grid indices are calculated based on the cell size to map brick positions correctly.
+ */
 bool SLevelEditorTool::LoadDataAsset(const FString& AssetPath)
 {
 	if (UBrickLevelData* LoadedData = Cast<UBrickLevelData>(StaticLoadObject(UBrickLevelData::StaticClass(), nullptr, *AssetPath)))
@@ -403,6 +530,17 @@ bool SLevelEditorTool::LoadDataAsset(const FString& AssetPath)
 	return false;
 }
 
+/**
+ * @brief Handles the selection of a level asset from the asset picker.
+ *
+ * This method is called when a user selects an asset in the asset picker dialog. It validates the selected asset,
+ * attempts to load the level data, and provides user feedback about the loading process.
+ *
+ * @param SelectedAsset The asset data of the selected level asset.
+ *
+ * @note If the asset is valid and successfully loaded, the grid is updated and a success notification is shown.
+ * @note If the asset is invalid or loading fails, a warning is logged and a failure notification is displayed.
+ */
 void SLevelEditorTool::OnAssetSelected(const FAssetData& SelectedAsset)
 {
 	if (SelectedAsset.IsValid())
@@ -425,6 +563,20 @@ void SLevelEditorTool::OnAssetSelected(const FAssetData& SelectedAsset)
 	}
 }
 
+/**
+ * @brief Adds a brick to the grid at the specified row and column.
+ *
+ * @param Row The vertical position of the brick in the grid.
+ * @param Column The horizontal position of the brick in the grid.
+ * @param BrickState The type of brick to be added to the grid.
+ *
+ * @details This method adds a new brick to the grid if the specified location is valid and not already occupied.
+ * It calculates the grid index, creates a new FBrickInfo with the correct position and brick type, 
+ * and then updates the grid visualization.
+ *
+ * @note The method uses CellSize to calculate the pixel position of the brick.
+ * @note The grid is updated only if the index is valid and the cell is not already filled.
+ */
 void SLevelEditorTool::AddBrickToGrid(int32 Row, int32 Column, EBRICK_TYPE BrickState)
 {
 	int32 Index = GetGridIndex(Row, Column);
@@ -435,6 +587,18 @@ void SLevelEditorTool::AddBrickToGrid(int32 Row, int32 Column, EBRICK_TYPE Brick
 	}
 }
 
+/**
+ * @brief Removes a brick from the specified grid location.
+ *
+ * Removes the brick at the given row and column by setting its state to EMPTY.
+ * If the grid index is valid and the current brick is not already empty, 
+ * the brick state is updated and the grid visualization is refreshed.
+ *
+ * @param Row The row index of the brick to remove.
+ * @param Column The column index of the brick to remove.
+ *
+ * @note This method triggers a grid update to reflect the change in the UI.
+ */
 void SLevelEditorTool::RemoveBrickFromGrid(int32 Row, int32 Column)
 {
 	int32 Index = GetGridIndex(Row, Column);
@@ -445,6 +609,24 @@ void SLevelEditorTool::RemoveBrickFromGrid(int32 Row, int32 Column)
 	}
 }
 
+/**
+ * @brief Saves the current level configuration as a new asset with the specified name.
+ *
+ * @details This method prepares the current level data for saving by:
+ * - Validating the provided asset name
+ * - Creating a new level data asset if none exists
+ * - Collecting brick information from the current grid
+ * - Setting grid size and cell size metadata
+ * - Saving the asset using the SaveDataAsset method
+ *
+ * @param LevelName The desired name for the level asset
+ *
+ * @note If the asset name is invalid or no bricks are present, the save operation will be skipped
+ * @note Logs a success message upon successful asset creation
+ *
+ * @see IsAssetNameValid()
+ * @see SaveDataAsset()
+ */
 void SLevelEditorTool::SaveLevelAs(const FString& LevelName)
 {
 	if (!IsAssetNameValid(LevelName))
@@ -479,6 +661,19 @@ void SLevelEditorTool::SaveLevelAs(const FString& LevelName)
 	
 }
 
+/**
+ * Validates the provided asset name for a new level asset.
+ *
+ * @param AssetName The proposed name for the level asset.
+ * @return bool True if the asset name is valid and unique, false otherwise.
+ *
+ * @details Checks two primary conditions for asset name validity:
+ * 1. The asset name cannot be empty.
+ * 2. An asset with the same name must not already exist in the BrickBreakerLevels directory.
+ *
+ * @note Logs a warning message if the asset name is invalid, providing context for the failure.
+ * @note Assumes the standard asset path for BrickBreaker levels is "/Game/BrickBreakerLevels/".
+ */
 bool SLevelEditorTool::IsAssetNameValid(const FString& AssetName) const
 {
 	if (AssetName.IsEmpty())
@@ -498,6 +693,15 @@ bool SLevelEditorTool::IsAssetNameValid(const FString& AssetName) const
 	return true;
 }
 
+/**
+ * Displays a notification message to the user with a specified completion state.
+ *
+ * @param Message The text message to be displayed in the notification.
+ * @param State The completion state of the notification (e.g., success, failure, pending).
+ *
+ * @note The notification will automatically fade out after 3 seconds.
+ * @note Uses Slate's notification system to provide visual feedback to the user.
+ */
 void SLevelEditorTool::ShowNotification(const FString& Message, SNotificationItem::ECompletionState State)
 {
 	FNotificationInfo Info(FText::FromString(Message));
@@ -513,6 +717,18 @@ void SLevelEditorTool::ShowNotification(const FString& Message, SNotificationIte
 	}
 }
 
+/**
+ * @brief Adjusts the grid size while preserving existing brick data.
+ *
+ * This method resizes the grid by creating a new grid array and transferring existing brick information.
+ * If the grid size increases, new cells are initialized with empty bricks. If the grid size decreases,
+ * only the bricks within the new grid dimensions are preserved.
+ *
+ * @note The method maintains the relative positions of existing bricks in the new grid configuration.
+ * @note After resizing, the grid visualization is updated to reflect the new grid state.
+ *
+ * @see UpdateGrid()
+ */
 void SLevelEditorTool::OnGridSizeChanged()
 {
 	TArray<TOptional<FBrickInfo>> NewGridBricks;
@@ -542,6 +758,18 @@ void SLevelEditorTool::OnGridSizeChanged()
 	UpdateGrid();
 }
 
+/**
+ * @brief Clears all bricks in the grid, resetting them to an empty state.
+ *
+ * Iterates through each cell in the grid and sets the brick to an empty state.
+ * This method resets the entire grid to its initial configuration with no bricks.
+ * Each brick's position is calculated based on its row and column, maintaining
+ * the original grid layout but with no active brick types.
+ *
+ * @note The method uses nested loops to traverse all rows and columns of the grid.
+ * @note Brick positions are calculated using row and column indices multiplied by cell size.
+ * @note After execution, all grid cells will contain an EMPTY brick type.
+ */
 void SLevelEditorTool::ClearDataInGrids()
 {
 	for (int32 Row = 0; Row < GridRows; ++Row)
@@ -554,6 +782,15 @@ void SLevelEditorTool::ClearDataInGrids()
 	}
 }
 
+/**
+ * @brief Retrieves the color associated with a specific brick type.
+ *
+ * Searches through the BricksColors array to find the matching brick type and returns its corresponding color.
+ * If no matching brick type is found, returns the color of the first brick type in the array.
+ *
+ * @param BrickState The type of brick for which to retrieve the color.
+ * @return FLinearColor The color associated with the specified brick type.
+ */
 FLinearColor SLevelEditorTool::GetColorByBrickType(EBRICK_TYPE BrickState)
 {
 	FBrickColor BrickColor = BricksColors[0];
@@ -568,11 +805,33 @@ FLinearColor SLevelEditorTool::GetColorByBrickType(EBRICK_TYPE BrickState)
 	return BrickColor.BrickColor;
 }
 
+/**
+ * @brief Sets the current brick type for the level editor.
+ *
+ * @param BrickType The type of brick to be used when adding new bricks to the grid.
+ *
+ * @note This method updates the internal brick type state, which determines the type of brick
+ * that will be placed when interacting with the grid.
+ */
 void SLevelEditorTool::SetBrickType(EBRICK_TYPE BrickType)
 {
 	CurrentBrickType = BrickType;
 }
 
+/**
+ * Opens an asset picker dialog to select a Brick Level Data asset.
+ *
+ * This method creates a modal window with a content browser asset picker, configured to:
+ * - Display only UBrickLevelData assets
+ * - Allow single asset selection
+ * - Provide a list view of available assets
+ *
+ * When an asset is selected, it triggers the OnAssetSelected method and closes the picker window.
+ *
+ * @note Uses the Content Browser module to create the asset picker
+ * @note Creates a modal window with a fixed size of 800x600 pixels
+ * @note Prevents window maximization and minimization
+ */
 void SLevelEditorTool::OnOpenAssetPicker()
 {
 	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>(TEXT("ContentBrowser"));
